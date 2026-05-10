@@ -611,9 +611,23 @@ letter.addEventListener('mousedown', (e) => {
   letter.style.cursor = 'grabbing';
   e.preventDefault();
 });
+letter.addEventListener('touchstart', (e) => {
+  if (!isOpen) return;
+  isDragging = true;
+  startY = e.touches[0].clientY;
+  initialOffset = letterOffset;
+  e.preventDefault();
+});
 document.addEventListener('mousemove', (e) => {
   if (isDragging) {
     const deltaY = e.clientY - startY;
+    letterOffset = initialOffset + deltaY;
+    letter.style.transform = 'translateX(-50%) translateY(calc(-50% + ' + letterOffset + 'px))';
+  }
+});
+document.addEventListener('touchmove', (e) => {
+  if (isDragging) {
+    const deltaY = e.touches[0].clientY - startY;
     letterOffset = initialOffset + deltaY;
     letter.style.transform = 'translateX(-50%) translateY(calc(-50% + ' + letterOffset + 'px))';
   }
@@ -622,6 +636,11 @@ document.addEventListener('mouseup', () => {
   if (isDragging) {
     isDragging = false;
     letter.style.cursor = 'grab';
+  }
+});
+document.addEventListener('touchend', () => {
+  if (isDragging) {
+    isDragging = false;
   }
 });
 
