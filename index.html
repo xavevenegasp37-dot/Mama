@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta para Mamá 💖</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Lora:ital,wght@0,400;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0a2e 0%, #2d1b69 30%, #4a1a4a 60%, #7b2d5e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lora', serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Estrellas de fondo */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--dur) ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: var(--op); transform: scale(1); }
+  }
+
+  /* Partículas de polvo mágico */
+  .dust {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Escena principal */
+  .scene {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Título */
+  .title-hint {
+    font-family: 'Dancing Script', cursive;
+    color: rgba(255,200,220,0.8);
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    animation: float 3s ease-in-out infinite;
+    text-shadow: 0 0 20px rgba(255,100,150,0.5);
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* Contenedor del sobre */
+  .envelope-scene {
+    position: relative;
+    width: 340px;
+    height: 240px;
+    cursor: pointer;
+    filter: drop-shadow(0 20px 60px rgba(200,50,120,0.4));
+    transition: transform 0.3s ease;
+  }
+  .envelope-scene:hover {
+    transform: scale(1.03);
+  }
+
+  /* SVG del sobre */
+  .envelope-svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  /* Flap superior del sobre */
+  .flap-top {
+    transform-origin: top center;
+    transform-box: fill-box;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .envelope-scene.opening .flap-top {
+    animation: openFlap 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes openFlap {
+    0% { transform: rotateX(0deg); }
+    100% { transform: rotateX(-180deg); }
+  }
+
+  /* La carta que sale */
+  .letter-paper {
+    position: absolute;
+    width: 300px;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: linear-gradient(160deg, #fff9f9 0%, #fff0f5 100%);
+    border-radius: 8px;
+    padding: 30px 28px 28px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 1px solid rgba(255,180,200,0.4);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .letter-paper.revealed {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 20;
+    pointer-events: all;
+    cursor: grab;
+  }
+
+  /* Líneas decorativas de la carta */
+  .letter-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(220,100,140,0.3), transparent);
+    margin: 10px 0;
+  }
+
+  .letter-greeting {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: #c0386a;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .letter-body {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 0.92rem;
+    color: #5a2040;
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .letter-signature {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: #c0386a;
+    text-align: right;
+  }
+
+  /* Foto */
+  .photo-frame {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #e8a0b4;
+    overflow: hidden;
+    margin: 0 auto 12px;
+    box-shadow: 0 4px 15px rgba(200,80,120,0.3);
+    background: linear-gradient(135deg, #f9d0dc, #fde8ef);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+
+  /* Botón de clic */
+  .click-btn {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.1rem;
+    color: rgba(255,200,220,0.9);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,180,210,0.3);
+    border-radius: 30px;
+    padding: 10px 28px;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+    letter-spacing: 1px;
+    animation: pulse-btn 2s ease-in-out infinite;
+  }
+  .click-btn:hover {
+    background: rgba(255,100,150,0.2);
+    border-color: rgba(255,150,190,0.6);
+    transform: scale(1.05);
+  }
+  @keyframes pulse-btn {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,100,150,0); }
+    50% { box-shadow: 0 0 0 8px rgba(255,100,150,0.15); }
+  }
+
+  /* Corazones flotantes */
+  .heart-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+  }
+  .heart {
+    position: absolute;
+    bottom: -60px;
+    font-size: var(--sz);
+    animation: riseHeart var(--speed) ease-in forwards;
+    opacity: 0;
+  }
+  @keyframes riseHeart {
+    0% { transform: translateY(0) rotate(var(--rot)) scale(0.5); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-110vh) translateX(var(--sway)) rotate(calc(var(--rot) + 30deg)) scale(1.2); opacity: 0; }
+  }
+
+  /* Destellos */
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 6;
+    font-size: 1.2rem;
+    animation: sparkleAnim 2s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes sparkleAnim {
+    0% { transform: scale(0) rotate(0); opacity: 0; }
+    30% { opacity: 1; }
+    70% { opacity: 0.7; }
+    100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
+  }
+
+  /* Overlay para cerrar la carta */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 0.8rem;
+    color: #c0386a;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+  }
+  .close-btn:hover { opacity: 1; }
+
+  /* Música indicator */
+  .music-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Dancing Script', cursive;
+    color: rgba(255,200,220,0.8);
+    font-size: 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,180,210,0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .music-indicator.active { display: flex; }
+  .music-indicator:hover { background: rgba(255,100,150,0.15); }
+  .music-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 16px;
+  }
+  .bar {
+    width: 3px;
+    background: #e8a0b4;
+    border-radius: 2px;
+    animation: musicBar var(--bd) ease-in-out infinite alternate;
+  }
+  @keyframes musicBar {
+    from { height: 3px; }
+    to { height: 14px; }
+  }
+
+  /* Efecto de apertura - overlay oscuro */
+  .scene-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    z-index: 15;
+    transition: background 1s;
+    pointer-events: none;
+  }
+
+  /* Mensaje de instrucción */
+  .hint-arrow {
+    animation: float 2s ease-in-out infinite;
+    font-size: 1.5rem;
+    margin-top: 5px;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .envelope-scene { width: 290px; height: 200px; }
+    .letter-paper { width: 260px; padding: 24px 22px 22px; }
+    .letter-paper.revealed { transform: translateX(-50%) translateY(-50%); }
+    .letter-greeting { font-size: 1.4rem; }
+    .letter-body { font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Fondo de estrellas -->
+<div class="stars" id="stars"></div>
+<div class="dust" id="dust"></div>
+<div class="heart-container" id="hearts"></div>
+<div class="scene-overlay" id="overlay"></div>
+
+<!-- Indicador de música -->
+<div class="music-indicator" id="musicIndicator" onclick="toggleMusic()">
+  <span>♪ Música</span>
+  <div class="music-bars">
+    <div class="bar" style="--bd:0.4s"></div>
+    <div class="bar" style="--bd:0.6s"></div>
+    <div class="bar" style="--bd:0.5s"></div>
+    <div class="bar" style="--bd:0.7s"></div>
+    <div class="bar" style="--bd:0.45s"></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="title-hint">✨ Un mensaje especial para ti ✨</div>
+
+  <!-- Sobre -->
+  <div class="envelope-scene" id="envelope" onclick="openEnvelope()">
+    <svg class="envelope-svg" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="envGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#d4547a"/>
+          <stop offset="100%" style="stop-color:#9b3a60"/>
+        </linearGradient>
+        <linearGradient id="envBody" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#e8708f"/>
+          <stop offset="100%" style="stop-color:#c04870"/>
+        </linearGradient>
+        <linearGradient id="flapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#bf4070"/>
+          <stop offset="100%" style="stop-color:#a03360"/>
+        </linearGradient>
+        <filter id="envShadow">
+          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="rgba(100,20,60,0.5)"/>
+        </filter>
+      </defs>
+      <!-- Cuerpo del sobre -->
+      <rect x="10" y="60" width="320" height="170" rx="12" fill="url(#envBody)" filter="url(#envShadow)"/>
+      <!-- Triángulos laterales inferiores -->
+      <polygon points="10,60 170,160 330,60" fill="url(#envGrad)" opacity="0.6"/>
+      <polygon points="10,230 170,160 10,100" fill="#b8406c" opacity="0.8"/>
+      <polygon points="330,230 170,160 330,100" fill="#b8406c" opacity="0.8"/>
+      <polygon points="10,230 170,160 330,230" fill="#d06080" opacity="0.9"/>
+      <!-- Flap superior (se animará) -->
+      <polygon id="envFlap" class="flap-top" points="10,60 170,150 330,60" fill="url(#flapGrad)"/>
+      <!-- Sello decorativo -->
+      <circle cx="270" cy="195" r="22" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+      <text x="270" y="200" text-anchor="middle" font-size="18" fill="white" opacity="0.8">💌</text>
+      <!-- Corazón central -->
+      <text x="170" y="135" text-anchor="middle" font-size="28" opacity="0.9" class="env-heart">💖</text>
+      <!-- Borde decorativo -->
+      <rect x="10" y="60" width="320" height="170" rx="12" fill="none" stroke="rgba(255,200,220,0.3)" stroke-width="1.5"/>
+      <!-- Líneas decorativas del sobre -->
+      <line x1="20" y1="68" x2="320" y2="68" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    </svg>
+
+    <!-- La carta (detrás del sobre, sale al abrir) -->
+    <div class="letter-paper" id="letterPaper">
+      <button class="close-btn" onclick="closeLetter(event)">✕ cerrar</button>
+      <div class="photo-frame" id="photoFrame">📷</div>
+      <div class="letter-line"></div>
+      <div class="letter-greeting">Querida Mamá… 🌹</div>
+      <div class="letter-line"></div>
+      <div class="letter-body" id="letterText">
+        Cada día a tu lado ha sido un regalo que no merezco pero atesoro con todo mi corazón.<br><br>
+        Gracias por tus abrazos que curan todo, por tu paciencia infinita, por cada sacrificio que hiciste sin pedir nada a cambio.<br><br>
+        Eres mi fuerza, mi hogar, mi mayor ejemplo de amor.<br><br>
+        Hoy y siempre… 💕
+      </div>
+      <div class="letter-signature">Con todo mi amor,<br>Tu hij@ ✨</div>
+    </div>
+  </div>
+
+  <div id="hintArea">
+    <div class="click-btn" onclick="openEnvelope()">💌 Toca para abrir</div>
+    <div class="hint-arrow">👇</div>
+  </div>
+</div>
+
+<script>
+// ──── Música generada con Web Audio API ────
+let audioCtx = null;
+let musicPlaying = false;
+let musicNodes = [];
+
+function createMusic() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  playMelody();
+}
+
+function playMelody() {
+  if (!audioCtx || !musicPlaying) return;
+  const melody = [
+    [523.25, 0.4],[587.33, 0.4],[659.25, 0.4],[698.46, 0.4],
+    [783.99, 0.8],[698.46, 0.4],[659.25, 0.4],[587.33, 0.4],
+    [523.25, 0.8],[440, 0.4],[493.88, 0.4],[523.25, 0.4],
+    [587.33, 0.4],[659.25, 0.8],[587.33, 0.4],[523.25, 0.4],
+    [493.88, 0.4],[440, 0.8],[392, 0.4],[440, 0.4],
+    [493.88, 0.4],[523.25, 0.4],[587.33, 0.8]
+  ];
+  let time = audioCtx.currentTime + 0.1;
+  melody.forEach(([freq, dur]) => {
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 2000;
+    osc.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gainNode.gain.setValueAtTime(0, time);
+    gainNode.gain.linearRampToValueAtTime(0.12, time + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, time + dur * 0.9);
+    osc.start(time);
+    osc.stop(time + dur);
+    musicNodes.push(osc);
+    time += dur * 0.95;
+  });
+  // Acordes de acompañamiento
+  const chords = [[261.63, 0],[329.63, 0],[392, 0],[261.63, 3.2],[329.63, 3.2],[392, 3.2],[261.63, 6.4],[349.23, 6.4],[440, 6.4],[261.63, 9.6],[329.63, 9.6],[392, 9.6]];
+  chords.forEach(([freq, offset]) => {
+    const osc2 = audioCtx.createOscillator();
+    const g2 = audioCtx.createGain();
+    osc2.connect(g2); g2.connect(audioCtx.destination);
+    osc2.type = 'triangle';
+    osc2.frequency.value = freq;
+    const t2 = audioCtx.currentTime + 0.1 + offset;
+    g2.gain.setValueAtTime(0, t2);
+    g2.gain.linearRampToValueAtTime(0.04, t2 + 0.1);
+    g2.gain.exponentialRampToValueAtTime(0.001, t2 + 3.1);
+    osc2.start(t2); osc2.stop(t2 + 3.2);
+  });
+  const totalDur = melody.reduce((s, [,d]) => s + d * 0.95, 0) * 1000;
+  setTimeout(() => { if (musicPlaying) playMelody(); }, totalDur + 200);
+}
+
+function toggleMusic() {
+  if (!audioCtx) { createMusic(); musicPlaying = true; }
+  else if (audioCtx.state === 'suspended') { audioCtx.resume(); musicPlaying = true; }
+  else { audioCtx.suspend(); musicPlaying = false; }
+  document.getElementById('musicIndicator').querySelector('span').textContent = musicPlaying ? '♪ Música' : '♪ Pausar';
+}
+
+// ──── Estrellas de fondo ────
+function createStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 3 + 1;
+    star.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      --dur: ${Math.random() * 4 + 2}s;
+      --op: ${Math.random() * 0.8 + 0.2};
+      animation-delay: ${Math.random() * 5}s;
+    `;
+    container.appendChild(star);
+  }
+}
+
+// ──── Corazones flotantes ────
+let heartInterval = null;
+function spawnHeart() {
+  const hearts = document.getElementById('hearts');
+  const h = document.createElement('div');
+  h.className = 'heart';
+  const types = ['💖','💗','💓','💕','💝','🌹','✨','💞','🌸'];
+  h.textContent = types[Math.floor(Math.random() * types.length)];
+  const size = Math.random() * 20 + 16;
+  const sway = (Math.random() - 0.5) * 200;
+  h.style.cssText = `
+    left: ${Math.random() * 100}%;
+    --sz: ${size}px;
+    --speed: ${Math.random() * 5 + 6}s;
+    --rot: ${(Math.random() - 0.5) * 40}deg;
+    --sway: ${sway}px;
+    animation-delay: ${Math.random() * 1}s;
+  `;
+  hearts.appendChild(h);
+  setTimeout(() => h.remove(), 12000);
+}
+
+// ──── Destellos al click ────
+function createSparkles(x, y) {
+  const sparkles = ['✨','⭐','💫','🌟','✦','❋'];
+  for (let i = 0; i < 8; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+    const angle = (i / 8) * Math.PI * 2;
+    const dist = Math.random() * 80 + 40;
+    s.style.cssText = `
+      left: ${x}px; top: ${y}px;
+      --tx: ${Math.cos(angle) * dist}px;
+      --ty: ${Math.sin(angle) * dist}px;
+      animation-delay: ${i * 0.06}s;
+    `;
+    s.animate([
+      { transform: 'translate(-50%,-50%) scale(0) rotate(0deg)', opacity: 0 },
+      { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(1) rotate(180deg)`, opacity: 1, offset: 0.3 },
+      { transform: `translate(calc(-50% + ${Math.cos(angle)*dist*1.5}px), calc(-50% + ${Math.sin(angle)*dist*1.5}px)) scale(1.5) rotate(360deg)`, opacity: 0 }
+    ], { duration: 1200, delay: i * 60, easing: 'ease-out', fill: 'both' });
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 2000);
+  }
+}
+
+// ──── Estado ────
+let isOpen = false;
+let letterOffset = 0;
+let isDragging = false;
+let startY = 0;
+let initialOffset = 0;
+
+function openEnvelope() {
+  if (isOpen) return;
+  isOpen = true;
+
+  // Destellos
+  const env = document.getElementById('envelope');
+  const rect = env.getBoundingClientRect();
+  createSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+  // Animar flap
+  env.classList.add('opening');
+
+  // Ocultar botón de instrucción
+  const hint = document.getElementById('hintArea');
+  hint.style.transition = 'opacity 0.5s';
+  hint.style.opacity = '0';
+  setTimeout(() => hint.style.display = 'none', 500);
+
+  // Mostrar carta
+  setTimeout(() => {
+    const letter = document.getElementById('letterPaper');
+    letter.classList.add('revealed');
+    letter.style.transform = 'translateX(-50%) translateY(calc(-50% + ' + letterOffset + 'px))';
+  }, 800);
+
+  // Mostrar música + iniciar
+  setTimeout(() => {
+    document.getElementById('musicIndicator').classList.add('active');
+    musicPlaying = true;
+    createMusic();
+
+    // Lluvia de corazones
+    heartInterval = setInterval(spawnHeart, 600);
+    for (let i = 0; i < 8; i++) setTimeout(spawnHeart, i * 150);
+  }, 1200);
+}
+
+function closeLetter(e) {
+  e.stopPropagation();
+  const letter = document.getElementById('letterPaper');
+  letter.classList.remove('revealed');
+  const env = document.getElementById('envelope');
+  env.classList.remove('opening');
+  isOpen = false;
+  letterOffset = 0;
+  if (heartInterval) { clearInterval(heartInterval); heartInterval = null; }
+
+  const hint = document.getElementById('hintArea');
+  hint.style.display = 'flex';
+  hint.style.flexDirection = 'column';
+  hint.style.alignItems = 'center';
+  setTimeout(() => hint.style.opacity = '1', 50);
+}
+
+// ──── Interactividad del papel ────
+const letter = document.getElementById('letterPaper');
+letter.addEventListener('mousedown', (e) => {
+  if (!isOpen) return;
+  isDragging = true;
+  startY = e.clientY;
+  initialOffset = letterOffset;
+  letter.style.cursor = 'grabbing';
+  e.preventDefault();
+});
+document.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    const deltaY = e.clientY - startY;
+    letterOffset = initialOffset + deltaY;
+    letter.style.transform = 'translateX(-50%) translateY(calc(-50% + ' + letterOffset + 'px))';
+  }
+});
+document.addEventListener('mouseup', () => {
+  if (isDragging) {
+    isDragging = false;
+    letter.style.cursor = 'grab';
+  }
+});
+
+// Inicializar
+createStars();
+// Corazones iniciales sutiles
+setTimeout(() => {
+  setInterval(() => { if (!isOpen) spawnHeart(); }, 2500);
+  spawnHeart(); spawnHeart();
+}, 1000);
+</script>
+</body>
+</html>
